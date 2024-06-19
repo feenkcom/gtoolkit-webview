@@ -8,6 +8,6 @@ Class {
 BaselineOfGToolkitWebview >> baseline: spec [
 	<baseline>
 		^ spec for: #common do: [
-			spec package: 'GToolkit-Webview'
+			spec package: 'GToolkit-WebView'
 		]
 ]
