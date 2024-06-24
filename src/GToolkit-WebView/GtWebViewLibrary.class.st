@@ -51,7 +51,7 @@ GtWebViewLibrary >> initEnvLogger [
 
 { #category : #'accessing platform' }
 GtWebViewLibrary >> macLibraryName [
-	^ FFIMacLibraryFinder findLibrary: 'libwebview.dylib'
+	^ FFIMacLibraryFinder findLibrary: 'libWebView.dylib'
 ]
 
 { #category : #'private - ffi' }
@@ -66,15 +66,15 @@ GtWebViewLibrary >> primTest [
 
 { #category : #'accessing platform' }
 GtWebViewLibrary >> unix32LibraryName [
-	^ FFIUnix32LibraryFinder findLibrary: 'libwebview.so'
+	^ FFIUnix32LibraryFinder findLibrary: 'libWebView.so'
 ]
 
 { #category : #'accessing platform' }
 GtWebViewLibrary >> unix64LibraryName [
-	^ FFIUnix64LibraryFinder findLibrary: 'libwebview.so'
+	^ FFIUnix64LibraryFinder findLibrary: 'libWebView.so'
 ]
 
 { #category : #'accessing platform' }
 GtWebViewLibrary >> win32LibraryName [
-	^ FFIWindowsLibraryFinder findLibrary: 'webview.dll'
+	^ FFIWindowsLibraryFinder findLibrary: 'WebView.dll'
 ]
