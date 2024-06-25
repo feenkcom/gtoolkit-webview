@@ -28,13 +28,6 @@ GtNativeWebView class >> primRelease: aHandle [
 	self ffiCall: #(void webview_release(void* aHandle)) options: #(optEventLoop)
 ]
 
-{ #category : #'private - ffi' }
-GtNativeWebView class >> release: aHandle [
-	GtJustContextStackSignal emit.
-
-	super release: aHandle.
-]
-
 { #category : #accessing }
 GtNativeWebView >> bounds: aRectangle [
 	self
