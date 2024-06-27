@@ -6,6 +6,25 @@ Class {
 	#category : #'GToolkit-WebView-Bindings'
 }
 
+{ #category : #'examples - string' }
+GtWebViewLibrary class >> exampleStringNewByteString [
+	<gtExample>
+	<noTest>
+	| byteString stringBox boxedString |
+	
+	byteString := String withAll: 'Hello'.
+
+	self assert: byteString isPinnedInMemory not.
+	stringBox := self uniqueInstance newString: byteString.
+	self assert: byteString isPinnedInMemory not.
+	
+	boxedString := stringBox string.
+	self assert: boxedString equals: byteString.
+	self assert: boxedString isPinnedInMemory not.
+	
+	^ stringBox
+]
+
 { #category : #'library path' }
 GtWebViewLibrary class >> ffiLibrary [
 	^ self
