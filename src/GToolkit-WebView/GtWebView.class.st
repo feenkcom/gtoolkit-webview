@@ -7,7 +7,8 @@ Class {
 		'position',
 		'extent',
 		'nativeWebView',
-		'spaceId'
+		'spaceId',
+		'html'
 	],
 	#category : #'GToolkit-WebView-Core'
 }
@@ -38,11 +39,17 @@ GtWebView >> hide [
 		ifTrue: [ nativeWebView hide ]
 ]
 
+{ #category : #accessing }
+GtWebView >> html: aString [
+	html := aString
+]
+
 { #category : #initialization }
 GtWebView >> initialize [
 	super initialize.
 	
 	url  := 'https://gtoolkit.com'.
+	html := nil.
 	position := 0@0.
 	extent := 600@400.
 ]
@@ -66,8 +73,12 @@ GtWebView >> privateEnsureCreateInSpace: aSpace [
 
 	GtNativeWebViewAttributes newDuring: [ :theAttributes |
 		| aWindowHandle |
+		
+		html
+			ifNil: [ theAttributes url: url ]
+			ifNotNil: [ :anHTML | theAttributes html: anHTML ].
+		
 		theAttributes
-			url: url;
 			position: position;
 			extent: extent.
 		

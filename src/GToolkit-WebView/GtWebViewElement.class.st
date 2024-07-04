@@ -9,6 +9,11 @@ Class {
 	#category : #'GToolkit-WebView-Core'
 }
 
+{ #category : #accessing }
+GtWebViewElement >> html: aString [
+	webView html: aString
+]
+
 { #category : #initialization }
 GtWebViewElement >> initialize [
 	super initialize.
