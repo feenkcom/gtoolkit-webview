@@ -27,8 +27,20 @@ GtNativeWebViewAttributes >> extent: aPoint [
 ]
 
 { #category : #accessing }
+GtNativeWebViewAttributes >> html: aString [
+	self ffiLibrary
+		newString: aString
+		during: [ :aStringBox | self primSetHtml: aStringBox ]
+]
+
+{ #category : #accessing }
 GtNativeWebViewAttributes >> position: aPoint [
 	self primSetX: aPoint x y: aPoint y
+]
+
+{ #category : #'private - ffi' }
+GtNativeWebViewAttributes >> primSetHtml: aStringBox [
+	self ffiCall: #(void webview_attributes_set_html(self, void* aStringBox))
 ]
 
 { #category : #'private - ffi' }
