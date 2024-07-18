@@ -30,9 +30,20 @@ GtWebViewLibrary class >> ffiLibrary [
 	^ self
 ]
 
+{ #category : #initialization }
+GtWebViewLibrary class >> hasModule [
+	^ self uniqueInstance hasModule
+]
+
 { #category : #logger }
 GtWebViewLibrary class >> initEnvLogger [
 	self uniqueInstance initEnvLogger
+]
+
+{ #category : #initialization }
+GtWebViewLibrary class >> initGtk [
+	"Does nothing on platforms except linux"
+	self uniqueInstance initGtk
 ]
 
 { #category : #initialization }
@@ -42,8 +53,10 @@ GtWebViewLibrary class >> initialize [
 
 { #category : #'system startup' }
 GtWebViewLibrary class >> startUp: isANewSession [
-	isANewSession
-		ifTrue: [ self initEnvLogger ]
+	(isANewSession and: [ self hasModule ])
+		ifTrue: [
+			self initEnvLogger.
+			self initGtk ]
 ]
 
 { #category : #testing }
@@ -68,6 +81,13 @@ GtWebViewLibrary >> initEnvLogger [
 		do: [ :e | NonInteractiveTranscript stdout nextPutAll: '[WebView] Could not init env logger'; cr ]
 ]
 
+{ #category : #logger }
+GtWebViewLibrary >> initGtk [
+	[ self primInitGtk ]
+		on: Error
+		do: [ :e | NonInteractiveTranscript stdout nextPutAll: '[WebView] Could not init gtk'; cr ]
+]
+
 { #category : #'accessing platform' }
 GtWebViewLibrary >> macLibraryName [
 	^ FFIMacLibraryFinder findLibrary: 'libWebView.dylib'
@@ -76,6 +96,11 @@ GtWebViewLibrary >> macLibraryName [
 { #category : #'private - ffi' }
 GtWebViewLibrary >> primInitEnvLogger [
 	^ self ffiCall: #(void webview_init_logger())
+]
+
+{ #category : #'private - ffi' }
+GtWebViewLibrary >> primInitGtk [
+	^ self ffiCall: #(void webview_init_gtk())
 ]
 
 { #category : #'private - ffi' }
