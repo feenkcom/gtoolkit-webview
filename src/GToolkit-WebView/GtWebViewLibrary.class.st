@@ -100,7 +100,9 @@ GtWebViewLibrary >> primInitEnvLogger [
 
 { #category : #'private - ffi' }
 GtWebViewLibrary >> primInitGtk [
-	^ self ffiCall: #(void webview_init_gtk())
+	^ self
+		ffiCall: #(void webview_init_gtk())
+		options: #(optEventLoop)
 ]
 
 { #category : #'private - ffi' }
