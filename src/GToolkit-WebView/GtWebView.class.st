@@ -4,14 +4,29 @@ Class {
 	#instVars : [
 		'session',
 		'url',
+		'html',
 		'position',
 		'extent',
 		'nativeWebView',
 		'spaceId',
-		'html'
+		'id',
+		'announcer'
+	],
+	#classVars : [
+		'UniqueIdGenerator'
 	],
 	#category : #'GToolkit-WebView-Core'
 }
+
+{ #category : #'class initialization' }
+GtWebView class >> initialize [
+	UniqueIdGenerator := GtWebViewUniqueIdGenerator new
+]
+
+{ #category : #accessing }
+GtWebView >> announcer [
+	^ announcer
+]
 
 { #category : #'geometry bounds' }
 GtWebView >> boundsInSpace: aRectangle [
@@ -33,6 +48,11 @@ GtWebView >> extent [
 	^ extent
 ]
 
+{ #category : #'api - event managing' }
+GtWebView >> handleEvent: aWebViewEvent [
+	announcer announce: aWebViewEvent
+]
+
 { #category : #'host space - displaying' }
 GtWebView >> hide [
 	self isValid
@@ -44,14 +64,21 @@ GtWebView >> html: aString [
 	html := aString
 ]
 
+{ #category : #accessing }
+GtWebView >> id [
+	^ id
+]
+
 { #category : #initialization }
 GtWebView >> initialize [
 	super initialize.
 	
+	id := UniqueIdGenerator generateUniqueId.
 	url  := 'https://gtoolkit.com'.
 	html := nil.
 	position := 0@0.
 	extent := 600@400.
+	announcer := Announcer new
 ]
 
 { #category : #testing }
@@ -71,6 +98,8 @@ GtWebView >> privateEnsureCreateInSpace: aSpace [
 	self isValid
 		ifTrue: [ ^ self ].
 
+	GtWebViewEventLoop registerWebView: self.
+
 	GtNativeWebViewAttributes newDuring: [ :theAttributes |
 		| aWindowHandle |
 		
@@ -80,8 +109,9 @@ GtWebView >> privateEnsureCreateInSpace: aSpace [
 		
 		theAttributes
 			position: position;
-			extent: extent.
-		
+			extent: extent;
+			eventsHandle: GtWebViewEventLoop eventsHandler id: self id.
+
 		aWindowHandle := aSpace hostSpace window rawWindowHandle.
 		nativeWebView := GtNativeWebView new: theAttributes windowHandle: aWindowHandle.
 		spaceId := aSpace id.
@@ -94,7 +124,9 @@ GtWebView >> privateEnsureRelease [
 		ifFalse: [ ^ self ].
 		
 	nativeWebView release.
-	nativeWebView := nil
+	nativeWebView := nil.
+	
+	GtWebViewEventLoop unregisterWebView: self
 ]
 
 { #category : #'host space - displaying' }
