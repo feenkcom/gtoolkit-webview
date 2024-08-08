@@ -19,7 +19,12 @@ GtWebViewElement >> initialize [
 	super initialize.
 	
 	self matchParent.
+
 	webView := GtWebView new.
+	webView announcer weak
+		when: GtWebViewEvent
+		send: #onWebViewEvent:
+		to: self
 ]
 
 { #category : #'hooks - children' }
@@ -49,6 +54,11 @@ GtWebViewElement >> onRemovedFromSceneGraph [
 	super onRemovedFromSceneGraph.
 	
 	webView hide
+]
+
+{ #category : #'event handling' }
+GtWebViewElement >> onWebViewEvent: aWebViewEvent [
+	self enqueueTask: (BlTaskAction new action: [ self dispatchEvent: aWebViewEvent ])
 ]
 
 { #category : #accessing }

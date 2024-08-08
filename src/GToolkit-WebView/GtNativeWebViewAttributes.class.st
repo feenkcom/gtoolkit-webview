@@ -22,6 +22,11 @@ GtNativeWebViewAttributes class >> primRelease: aHandle [
 ]
 
 { #category : #accessing }
+GtNativeWebViewAttributes >> eventsHandle: aNativeWebViewEventHandle id: aWebViewId [
+	self primSetEventsHandle: aNativeWebViewEventHandle id: aWebViewId
+]
+
+{ #category : #accessing }
 GtNativeWebViewAttributes >> extent: aPoint [
 	self primSetWidth: aPoint x height: aPoint y
 ]
@@ -36,6 +41,14 @@ GtNativeWebViewAttributes >> html: aString [
 { #category : #accessing }
 GtNativeWebViewAttributes >> position: aPoint [
 	self primSetX: aPoint x y: aPoint y
+]
+
+{ #category : #'private - ffi' }
+GtNativeWebViewAttributes >> primSetEventsHandle: aNativeWebViewEventHandle id: aWebViewId [
+	self ffiCall: #(void webview_attributes_set_events_handler(
+		self,
+		void* aNativeWebViewEventHandle,
+		uint64 aWebViewId))
 ]
 
 { #category : #'private - ffi' }
