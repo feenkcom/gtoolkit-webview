@@ -111,10 +111,10 @@ GtWebViewEventLoop >> ensureEventsHandler [
 	semaphoreIndex := Smalltalk registerExternalObject: semaphore.
 
 	externalEventHandler := GtWebViewLibrary hasModule
-		ifTrue: [ GtNativeWebViewEventHandler null ]
-		ifFalse: [ GtNativeWebViewEventHandler
+		ifTrue: [ GtNativeWebViewEventHandler
 				semaphoreIndex: semaphoreIndex
-				signaller: self primitiveGetSemaphoreSignaller ].
+				signaller: self primitiveGetSemaphoreSignaller ]
+		ifFalse: [ GtNativeWebViewEventHandler null ].
 
 	session := Smalltalk session.
 	^ externalEventHandler
