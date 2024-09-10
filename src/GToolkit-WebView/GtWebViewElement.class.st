@@ -31,6 +31,8 @@ GtWebViewElement >> initialize [
 GtWebViewElement >> onAddedToSceneGraph [
 	super onAddedToSceneGraph.
 	
+	OSPlatform current isLinux ifTrue: [ ^ self ].
+	
 	webView boundsInSpace: self boundsInSpace.
 	webView showInSpace: self space
 ]
@@ -52,6 +54,8 @@ GtWebViewElement >> onPositionInSpaceChanged [
 { #category : #'hooks - children' }
 GtWebViewElement >> onRemovedFromSceneGraph [
 	super onRemovedFromSceneGraph.
+	
+	OSPlatform current isLinux ifTrue: [ ^ self ].
 	
 	webView hide
 ]
