@@ -19,12 +19,25 @@ GtWebViewElement >> initialize [
 	super initialize.
 	
 	self matchParent.
+	self beFocusable.
 
 	webView := GtWebView new.
 	webView announcer weak
 		when: GtWebViewEvent
 		send: #onWebViewEvent:
-		to: self
+		to: self.
+		
+	self
+		when: GtWebViewGotFocusWindowsEvent
+		do: [ :anEvent | self requestFocus].
+		
+	self
+		when: GtWebViewLostFocusWindowsEvent
+		do: [ :anEvent | self loseFocus ].
+
+	self
+		when: BlBlurEvent
+		do: [ :anEvent | self onLoseFocus ].
 ]
 
 { #category : #'hooks - children' }
@@ -44,6 +57,15 @@ GtWebViewElement >> onExtentChanged [
 	webView boundsInSpace: self boundsInSpace
 ]
 
+{ #category : #initialization }
+GtWebViewElement >> onLoseFocus [
+	OSPlatform current isWindows
+		ifFalse: [ ^ self ].
+
+	self spaceDo: [ :aSpace | aSpace hostSpaceDo: [ :aHostSpace |
+		GtNativeWebView primWindowsSetFocus: aHostSpace window hwnd ] ]
+]
+
 { #category : #'hooks - geometry' }
 GtWebViewElement >> onPositionInSpaceChanged [
 	super onPositionInSpaceChanged.
@@ -60,7 +82,7 @@ GtWebViewElement >> onRemovedFromSceneGraph [
 	webView hide
 ]
 
-{ #category : #'event handling' }
+{ #category : #initalization }
 GtWebViewElement >> onWebViewEvent: aWebViewEvent [
 	self enqueueTask: (BlTaskAction new action: [ self dispatchEvent: aWebViewEvent ])
 ]
