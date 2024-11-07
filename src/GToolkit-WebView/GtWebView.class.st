@@ -114,6 +114,9 @@ GtWebView >> privateEnsureCreateInSpace: aSpace [
 
 		aWindowHandle := aSpace hostSpace window rawWindowHandle.
 		nativeWebView := GtNativeWebView new: theAttributes windowHandle: aWindowHandle.
+		nativeWebView
+			setEventsHandler: GtWebViewEventLoop eventsHandler
+			id: self id.
 		spaceId := aSpace id.
 		session := Smalltalk session ]
 ]

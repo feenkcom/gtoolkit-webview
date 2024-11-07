@@ -37,6 +37,8 @@ GtNativeWebViewEventHandler >> pollEvent [
 		GtNativeWebViewEventType Navigation -> GtNativeWebViewNavigationEvent.
 		GtNativeWebViewEventType PageLoad -> GtNativeWebViewPageLoadEvent.
 		GtNativeWebViewEventType Request -> GtNativeWebViewRequestEvent.
+		GtNativeWebViewEventType GotFocus -> GtNativeWebViewGotFocusEvent.
+		GtNativeWebViewEventType LostFocus -> GtNativeWebViewLostFocusEvent
 	} asDictionary.
 	
 	^ GtNativeWebViewEvent
