@@ -10,7 +10,8 @@ Class {
 		'nativeWebView',
 		'spaceId',
 		'id',
-		'announcer'
+		'announcer',
+		'currentUrl'
 	],
 	#classVars : [
 		'UniqueIdGenerator'
@@ -34,6 +35,11 @@ GtWebView >> boundsInSpace: aRectangle [
 	extent := aRectangle extent.
 	self isValid
 		ifTrue: [ nativeWebView bounds: aRectangle ]
+]
+
+{ #category : #accessing }
+GtWebView >> currentUrl [
+	^ currentUrl ifNil: [ url ]
 ]
 
 { #category : #accessing }
@@ -74,11 +80,13 @@ GtWebView >> initialize [
 	super initialize.
 	
 	id := UniqueIdGenerator generateUniqueId.
-	url  := 'https://gtoolkit.com'.
+	url := 'https://gtoolkit.com'.
 	html := nil.
 	position := 0@0.
 	extent := 600@400.
-	announcer := Announcer new
+
+	announcer := Announcer new.
+	announcer when: GtWebViewNavigationEvent send: #onUrlChanged: to: self.
 ]
 
 { #category : #testing }
@@ -86,6 +94,11 @@ GtWebView >> isValid [
 	^ session == Smalltalk session
 		and: [ nativeWebView isNotNil 
 			and: [ nativeWebView isNull not ] ]
+]
+
+{ #category : #'api - event managing' }
+GtWebView >> onUrlChanged: anEvent [
+	currentUrl := anEvent url
 ]
 
 { #category : #accessing }
@@ -132,6 +145,13 @@ GtWebView >> privateEnsureRelease [
 	GtWebViewEventLoop unregisterWebView: self
 ]
 
+{ #category : #accessing }
+GtWebView >> reloadUrl [
+	self currentUrl ifNotNil: [ :aUrl |
+		self isValid
+			ifTrue: [ nativeWebView loadUrl: aUrl ] ]
+]
+
 { #category : #'host space - displaying' }
 GtWebView >> showInSpace: aSpace [
 	(aSpace host isKindOf: BlRustWindowingHost)
@@ -151,6 +171,8 @@ GtWebView >> url [
 ]
 
 { #category : #accessing }
-GtWebView >> url: anObject [
-	url := anObject
+GtWebView >> url: aString [
+	url := aString asString.
+	self isValid
+		ifTrue: [ nativeWebView loadUrl: url ]
 ]

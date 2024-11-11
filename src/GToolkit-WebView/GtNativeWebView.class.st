@@ -49,12 +49,26 @@ GtNativeWebView >> hide [
 	self primSetVisible: false
 ]
 
+{ #category : #accessing }
+GtNativeWebView >> loadUrl: aString [
+	self ffiLibrary
+		newString: aString
+		during: [ :aStringBox | self primLoadUrl: aStringBox ]
+]
+
 { #category : #'private - ffi' }
 GtNativeWebView >> primEvaluate: aScriptToEvaluate [
 	self
 		ffiCall: #(void webview_evaluate_script_with_result(
 			self,
 			void* aScriptToEvaluate))
+		options: #(optEventLoop)
+]
+
+{ #category : #'private - ffi' }
+GtNativeWebView >> primLoadUrl: aStringBox [
+	self
+		ffiCall: #(void webview_load_url(self, void* aStringBox))
 		options: #(optEventLoop)
 ]
 
