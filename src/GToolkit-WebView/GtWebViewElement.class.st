@@ -1,98 +1,39 @@
 Class {
 	#name : #GtWebViewElement,
 	#superclass : #BlElement,
-	#traits : 'TBrLayoutResizable',
-	#classTraits : 'TBrLayoutResizable classTrait',
+	#traits : 'TBrLayoutResizable + TGtWebView',
+	#classTraits : 'TBrLayoutResizable classTrait + TGtWebView classTrait',
 	#instVars : [
-		'webView'
+		'protoWebView',
+		'navigationHeader'
 	],
-	#category : #'GToolkit-WebView-Core'
+	#category : #'GToolkit-WebView-Core - UI'
 }
-
-{ #category : #accessing }
-GtWebViewElement >> html: aString [
-	webView html: aString
-]
 
 { #category : #initialization }
 GtWebViewElement >> initialize [
 	super initialize.
 	
+	self layout: BlLinearLayout vertical.
 	self matchParent.
-	self beFocusable.
 
-	webView := GtWebView new.
-	webView announcer weak
-		when: GtWebViewEvent
-		send: #onWebViewEvent:
-		to: self.
-		
-	self
-		when: GtWebViewGotFocusWindowsEvent
-		do: [ :anEvent | self requestFocus].
-		
-	self
-		when: GtWebViewLostFocusWindowsEvent
-		do: [ :anEvent | self loseFocus ].
+	protoWebView := GtProtoWebViewElement new.
+	navigationHeader := GtWebViewNavigationElement new
+		webView: protoWebView webView.
 
-	self
-		when: BlBlurEvent
-		do: [ :anEvent | self onLoseFocus ].
-]
-
-{ #category : #'hooks - children' }
-GtWebViewElement >> onAddedToSceneGraph [
-	super onAddedToSceneGraph.
+	self addChildren: { navigationHeader . protoWebView }.
 	
-	OSPlatform current isLinux ifTrue: [ ^ self ].
-	
-	webView boundsInSpace: self boundsInSpace.
-	webView showInSpace: self space
-]
-
-{ #category : #'hooks - geometry' }
-GtWebViewElement >> onExtentChanged [
-	super onExtentChanged.
-	
-	webView boundsInSpace: self boundsInSpace
+	self
+		when: GtWebViewNavigationEvent
+		do: [ :anEvent | self onWebViewNavigated: anEvent ].
 ]
 
 { #category : #initialization }
-GtWebViewElement >> onLoseFocus [
-	OSPlatform current isWindows
-		ifFalse: [ ^ self ].
-
-	self spaceDo: [ :aSpace | aSpace hostSpaceDo: [ :aHostSpace |
-		GtNativeWebView primWindowsSetFocus: aHostSpace window hwnd ] ]
+GtWebViewElement >> onWebViewNavigated: anEvent [
+	navigationHeader updateUrl: anEvent url
 ]
 
-{ #category : #'hooks - geometry' }
-GtWebViewElement >> onPositionInSpaceChanged [
-	super onPositionInSpaceChanged.
-	
-	webView boundsInSpace: self boundsInSpace
-]
-
-{ #category : #'hooks - children' }
-GtWebViewElement >> onRemovedFromSceneGraph [
-	super onRemovedFromSceneGraph.
-	
-	OSPlatform current isLinux ifTrue: [ ^ self ].
-	
-	webView hide
-]
-
-{ #category : #initalization }
-GtWebViewElement >> onWebViewEvent: aWebViewEvent [
-	self enqueueTask: (BlTaskAction new action: [ self dispatchEvent: aWebViewEvent ])
-]
-
-{ #category : #accessing }
-GtWebViewElement >> url: aString [
-	webView url: aString
-]
-
-{ #category : #accessing }
+{ #category : #'api - webview' }
 GtWebViewElement >> webView [
-	^ webView
+	^ protoWebView webView
 ]
