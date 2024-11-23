@@ -35,7 +35,7 @@ GtProtoWebViewVideoFileElement >> file: aFile [
 
 { #category : #'as yet unclassified' }
 GtProtoWebViewVideoFileElement >> finalize [
-	tmpFile ifNotNil: [ tmpFile deleteFile ].
+	tmpFile ifNotNil: [ tmpFile ensureDelete ].
 	
 	super finalize
 ]
