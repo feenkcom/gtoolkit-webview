@@ -1,39 +1,25 @@
 Class {
 	#name : #GtWebViewElement,
-	#superclass : #BlElement,
-	#traits : 'TBrLayoutResizable + TGtWebView',
-	#classTraits : 'TBrLayoutResizable classTrait + TGtWebView classTrait',
-	#instVars : [
-		'protoWebView',
-		'navigationHeader'
-	],
+	#superclass : #GtAbstractWebViewElement,
 	#category : #'GToolkit-WebView-Core - UI'
 }
 
 { #category : #initialization }
+GtWebViewElement >> buildNavigationHeader [
+	navigationHeader := GtWebViewNavigationElement new
+			webView: protoWebView webView.
+	self addChild: navigationHeader
+]
+
+{ #category : #initialization }
 GtWebViewElement >> initialize [
 	super initialize.
-	
-	self layout: BlLinearLayout vertical.
-	self matchParent.
-
-	protoWebView := GtProtoWebViewElement new.
-	navigationHeader := GtWebViewNavigationElement new
-		webView: protoWebView webView.
-
-	self addChildren: { navigationHeader . protoWebView }.
-	
 	self
 		when: GtWebViewNavigationEvent
-		do: [ :anEvent | self onWebViewNavigated: anEvent ].
+		do: [ :anEvent | self onWebViewNavigated: anEvent ]
 ]
 
 { #category : #initialization }
 GtWebViewElement >> onWebViewNavigated: anEvent [
 	navigationHeader updateUrl: anEvent url
-]
-
-{ #category : #'api - webview' }
-GtWebViewElement >> webView [
-	^ protoWebView webView
 ]
