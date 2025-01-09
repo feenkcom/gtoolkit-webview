@@ -27,11 +27,6 @@ GtAbstractWebViewElement >> initialize [
 	self addChild: protoWebView.
 ]
 
-{ #category : #initialization }
-GtAbstractWebViewElement >> onWebViewNavigated: anEvent [
-	navigationHeader updateUrl: anEvent url
-]
-
 { #category : #'api - webview' }
 GtAbstractWebViewElement >> webView [
 	^ protoWebView webView
