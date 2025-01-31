@@ -1,6 +1,6 @@
 {
 	"repositories" : {
-		"github://feenkcom/Brick/src" : "v0.8.1413",
+		"github://feenkcom/Brick/src" : "v0.8.1414",
 		"github://feenkcom/gtoolkit-boxer/boxer-bindings" : "v0.8.54"
 	}
 }
