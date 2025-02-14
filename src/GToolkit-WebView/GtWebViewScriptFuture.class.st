@@ -48,7 +48,7 @@ GtWebViewScriptFuture >> poll: anAsynchronousContext [
 				wakerProcess value: ([
 					semaphore wait.
 					wakerProcess value: nil.
-					waker wakeUp	 ] forkAt: Processor activeProcess) ] ].
+					waker wakeUp	 ] forkAt: Processor activeProcess priority) ] ].
 	
 		^ AsyncPoll pending ].
 	
