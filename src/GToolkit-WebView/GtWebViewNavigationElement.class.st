@@ -41,7 +41,7 @@ GtWebViewNavigationElement >> initialize [
 	refreshButton := BrButton new
 		icon: BrGlamorousVectorIcons refresh;
 		label: 'Reload this page';
-		aptitude: BrGlamorousButtonWithIconAptitude + BrGlamorousWithLabelTooltipAptitude;
+		aptitude: BrGlamorousButtonWithIconAptitude + BrGlamorousButtonWithLabelTooltipAptitude2;
 		action: [ self webView reloadUrl ].
 	
 	self addChild: refreshButton.
