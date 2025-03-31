@@ -4,7 +4,8 @@ Class {
 	#traits : 'TBrLayoutResizable + TGtWebView',
 	#classTraits : 'TBrLayoutResizable classTrait + TGtWebView classTrait',
 	#instVars : [
-		'webView'
+		'webView',
+		'mainWindowHwnd'
 	],
 	#category : #'GToolkit-WebView-Core - UI'
 }
@@ -41,6 +42,14 @@ GtProtoWebViewElement >> onAddedToSceneGraph [
 	
 	OSPlatform current isLinux ifTrue: [ ^ self ].
 	
+	"on Windows we should remember the HWND of the main window to transfer focus to it
+	when a webview is removed from the graph scene. We can't get HWND when handling
+	#onRemovedFromSceneGraph because the webview element is no longer added to the space"
+	OSPlatform current isWindows
+		ifTrue: [
+			self spaceDo: [ :aSpace | aSpace hostSpaceDo: [ :aHostSpace |
+				mainWindowHwnd := aHostSpace window hwnd ] ] ].
+	
 	webView boundsInSpace: self boundsInSpace.
 	webView showInSpace: self space
 ]
@@ -55,10 +64,7 @@ GtProtoWebViewElement >> onExtentChanged [
 { #category : #'private - event handling' }
 GtProtoWebViewElement >> onLoseFocus [
 	OSPlatform current isWindows
-		ifFalse: [ ^ self ].
-
-	self spaceDo: [ :aSpace | aSpace hostSpaceDo: [ :aHostSpace |
-		GtNativeWebView primWindowsSetFocus: aHostSpace window hwnd ] ]
+		ifTrue: [ self privateWindowsTransferFocusToMainWindow ].
 ]
 
 { #category : #'hooks - geometry' }
@@ -73,13 +79,29 @@ GtProtoWebViewElement >> onRemovedFromSceneGraph [
 	super onRemovedFromSceneGraph.
 	
 	OSPlatform current isLinux ifTrue: [ ^ self ].
-	
+	OSPlatform current isWindows
+		ifTrue: [ self privateWindowsTransferFocusToMainWindow ].
+
 	webView hide
 ]
 
 { #category : #'private - event handling' }
 GtProtoWebViewElement >> onWebViewEvent: aWebViewEvent [
 	self enqueueTask: (BlTaskAction new action: [ self fireEvent: aWebViewEvent ])
+]
+
+{ #category : #'as yet unclassified' }
+GtProtoWebViewElement >> privateWindowsTransferFocusToMainWindow [
+	self
+		assert: [ OSPlatform current isWindows ]
+		description: [ 'Only available on Windows' ].
+
+	self spaceDo: [ :aSpace | aSpace hostSpaceDo: [ :aHostSpace |
+		GtNativeWebView primWindowsSetFocus: aHostSpace window hwnd.
+		^ self ] ].
+	
+	(mainWindowHwnd isNotNil and: [ mainWindowHwnd isNull not ])
+		ifTrue: [ GtNativeWebView primWindowsSetFocus: mainWindowHwnd ].
 ]
 
 { #category : #'api - webview' }
