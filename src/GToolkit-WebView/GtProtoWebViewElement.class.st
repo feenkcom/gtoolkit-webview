@@ -63,8 +63,7 @@ GtProtoWebViewElement >> onExtentChanged [
 
 { #category : #'private - event handling' }
 GtProtoWebViewElement >> onLoseFocus [
-	OSPlatform current isWindows
-		ifTrue: [ self privateWindowsTransferFocusToMainWindow ].
+	webView transferFocusToMainWindow
 ]
 
 { #category : #'hooks - geometry' }
@@ -79,29 +78,14 @@ GtProtoWebViewElement >> onRemovedFromSceneGraph [
 	super onRemovedFromSceneGraph.
 	
 	OSPlatform current isLinux ifTrue: [ ^ self ].
-	OSPlatform current isWindows
-		ifTrue: [ self privateWindowsTransferFocusToMainWindow ].
-
+	
+	webView transferFocusToMainWindow.
 	webView hide
 ]
 
 { #category : #'private - event handling' }
 GtProtoWebViewElement >> onWebViewEvent: aWebViewEvent [
 	self enqueueTask: (BlTaskAction new action: [ self fireEvent: aWebViewEvent ])
-]
-
-{ #category : #'as yet unclassified' }
-GtProtoWebViewElement >> privateWindowsTransferFocusToMainWindow [
-	self
-		assert: [ OSPlatform current isWindows ]
-		description: [ 'Only available on Windows' ].
-
-	self spaceDo: [ :aSpace | aSpace hostSpaceDo: [ :aHostSpace |
-		GtNativeWebView primWindowsSetFocus: aHostSpace window hwnd.
-		^ self ] ].
-	
-	(mainWindowHwnd isNotNil and: [ mainWindowHwnd isNull not ])
-		ifTrue: [ GtNativeWebView primWindowsSetFocus: mainWindowHwnd ].
 ]
 
 { #category : #'api - webview' }

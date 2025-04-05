@@ -28,13 +28,6 @@ GtNativeWebView class >> primRelease: aHandle [
 	self ffiCall: #(void webview_release(void* aHandle)) options: #(optEventLoop)
 ]
 
-{ #category : #'private - ffi' }
-GtNativeWebView class >> primWindowsSetFocus: aHandle [
-	^ self ffiCall: #(void* webview_windows_set_focus(
-		void* aHandle))
-	options: #(optEventLoop)
-]
-
 { #category : #accessing }
 GtNativeWebView >> bounds: aRectangle [
 	self
@@ -62,6 +55,13 @@ GtNativeWebView >> primEvaluate: aScriptToEvaluate [
 		ffiCall: #(void webview_evaluate_script_with_result(
 			self,
 			void* aScriptToEvaluate))
+		options: #(optEventLoop)
+]
+
+{ #category : #'private - ffi' }
+GtNativeWebView >> primFocusParent [
+	self
+		ffiCall: #(void webview_focus_parent(self))
 		options: #(optEventLoop)
 ]
 
@@ -115,4 +115,9 @@ GtNativeWebView >> setEventsHandler: aNativeWebViewEventHandle id: aWebViewId [
 { #category : #accessing }
 GtNativeWebView >> show [
 	self primSetVisible: true
+]
+
+{ #category : #accessing }
+GtNativeWebView >> transferFocusToMainWindow [
+	self primFocusParent
 ]
