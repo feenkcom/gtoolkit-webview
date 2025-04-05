@@ -165,6 +165,12 @@ GtWebView >> showInSpace: aSpace [
 		ifFalse: [ self privateEnsureCreateInSpace: aSpace ]
 ]
 
+{ #category : #'as yet unclassified' }
+GtWebView >> transferFocusToMainWindow [
+	self isValid
+		ifTrue: [ nativeWebView transferFocusToMainWindow ]
+]
+
 { #category : #accessing }
 GtWebView >> url [
 	^ url
