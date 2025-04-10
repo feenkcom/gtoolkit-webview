@@ -114,8 +114,6 @@ GtWebView >> privateEnsureCreateInSpace: aSpace [
 	GtWebViewEventLoop registerWebView: self.
 
 	GtNativeWebViewAttributes newDuring: [ :theAttributes |
-		| aWindowHandle |
-		
 		html
 			ifNil: [ theAttributes url: url ]
 			ifNotNil: [ :anHTML | theAttributes html: anHTML ].
@@ -124,14 +122,16 @@ GtWebView >> privateEnsureCreateInSpace: aSpace [
 			position: position;
 			extent: extent;
 			eventsHandle: GtWebViewEventLoop eventsHandler id: self id.
-
-		aWindowHandle := aSpace hostSpace window rawWindowHandle.
-		nativeWebView := GtNativeWebView new: theAttributes windowHandle: aWindowHandle.
-		nativeWebView
-			setEventsHandler: GtWebViewEventLoop eventsHandler
-			id: self id.
-		spaceId := aSpace id.
-		session := Smalltalk session ]
+			
+		aSpace hostSpaceDo: [ :aHostSpace |
+			| aWindowHandle |
+			aWindowHandle := aHostSpace window rawWindowHandle.
+			nativeWebView := GtNativeWebView new: theAttributes windowHandle: aWindowHandle.
+			nativeWebView
+				setEventsHandler: GtWebViewEventLoop eventsHandler
+				id: self id.
+			spaceId := aSpace id.
+			session := Smalltalk session ] ]
 ]
 
 { #category : #private }
