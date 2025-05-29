@@ -50,7 +50,7 @@ GtProtoWebViewElement >> onAddedToSceneGraph [
 			self spaceDo: [ :aSpace | aSpace hostSpaceDo: [ :aHostSpace |
 				mainWindowHwnd := aHostSpace window hwnd ] ] ].
 	
-	webView boundsInSpace: self boundsInSpace.
+	webView boundsInSpace: self boundsInChildWindow.
 	webView showInSpace: self space
 ]
 
@@ -58,7 +58,7 @@ GtProtoWebViewElement >> onAddedToSceneGraph [
 GtProtoWebViewElement >> onExtentChanged [
 	super onExtentChanged.
 	
-	webView boundsInSpace: self boundsInSpace
+	webView boundsInSpace: self boundsInChildWindow
 ]
 
 { #category : #'private - event handling' }
@@ -70,7 +70,7 @@ GtProtoWebViewElement >> onLoseFocus [
 GtProtoWebViewElement >> onPositionInSpaceChanged [
 	super onPositionInSpaceChanged.
 	
-	webView boundsInSpace: self boundsInSpace
+	webView boundsInSpace: self boundsInChildWindow
 ]
 
 { #category : #'hooks - children' }
