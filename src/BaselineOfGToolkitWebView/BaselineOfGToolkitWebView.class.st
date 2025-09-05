@@ -13,7 +13,7 @@ BaselineOfGToolkitWebView >> baseline: spec [
 				spec repository: 'github://feenkcom/gtoolkit-boxer:v0.8.56/boxer-bindings' ].
 		spec
 			baseline: 'Brick' with: [
-				spec repository: 'github://feenkcom/Brick:v0.8.1663/src' ].
+				spec repository: 'github://feenkcom/Brick:v0.8.1664/src' ].
 
 		spec package: 'GToolkit-WebView' with: [
 			spec requires: #(#GToolkitBoxer #Brick) ].
