@@ -13,8 +13,9 @@ Class {
 
 { #category : #initialization }
 GtWebViewNavigationElement >> initialize [
+	| scrollable |
 	super initialize.
-	
+
 	self hMatchParent.
 	self vFitContent.
 	self alignCenterLeft.
@@ -24,28 +25,41 @@ GtWebViewNavigationElement >> initialize [
 	self padding: (BlInsets all: 5).
 
 	urlEditor := BrEditor new
-		beMode: BrTextEditorEditableSingleLineMode new;
-		hMatchParent;
-		vFitContent;
-		aptitude: BrGlamorousRegularEditorAptitude + BrGlamorousEditorSpacingAptitude;
-		text: 'about:blank';
-		geometry: BlStadiumGeometry new;
-		background: self theme default contentBackground;
-		padding: (BlInsets top: 5 right: 10 bottom: 5 left: 10);
-		yourself.
+			beMode: BrTextEditorEditableSingleLineMode new;
+			hFitContent;
+			vFitContent;
+			aptitude: BrGlamorousRegularEditorAptitude;
+			text: 'about:blank';
+			padding: (BlInsets
+					top: 5
+					right: 10
+					bottom: 5
+					left: 10);
+			yourself.
 
-	urlEditor addEditorShortcut: (BlShortcutWithAction new
-		combination: BlKeyCombination enter;
-		action: [ :aShortcutEvent | self webView url: aShortcutEvent currentTarget text asString trimmed ]).
+	urlEditor
+		addEditorShortcut: (BlShortcutWithAction new
+				combination: BlKeyCombination enter;
+				action: [ :aShortcutEvent | self webView url: aShortcutEvent currentTarget text asString trimmed ]).
 
 	refreshButton := BrButton new
-		icon: BrGlamorousVectorIcons refresh;
-		label: 'Reload this page';
-		aptitude: BrGlamorousButtonWithIconAptitude + BrGlamorousButtonWithLabelTooltipAptitude2;
-		action: [ self webView reloadUrl ].
-	
+			icon: BrGlamorousVectorIcons refresh;
+			label: 'Reload this page';
+			aptitude: BrGlamorousButtonWithIconAptitude + BrGlamorousButtonWithLabelTooltipAptitude2;
+			action: [ self webView reloadUrl ].
+
 	self addChild: refreshButton.
-	self addChild: urlEditor.
+
+	scrollable := BlScrollableElement new.
+	scrollable
+		addAptitude: BrGlamorousEditorSpacingAptitude;
+		geometry: BlStadiumGeometry new;
+		constraintsDo: [ :c | 
+			c horizontal matchParent.
+			c vertical fitContent ].
+	scrollable addChild: urlEditor.
+
+	self addChild: scrollable
 ]
 
 { #category : #accessing }
