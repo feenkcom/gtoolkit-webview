@@ -4,6 +4,13 @@ Trait {
 }
 
 { #category : #'api - webview' }
+TGtWebView >> addCustomProtocol: aProtocolName content: aContent [
+	self webView
+		addCustomProtocol: aProtocolName
+		content: aContent
+]
+
+{ #category : #'api - webview' }
 TGtWebView >> evaluate: aJavaScript [
 	"Create a Future that will be resolved with an evaluation result when awaited.
 	Does nothing unless `await`ed"
@@ -22,6 +29,13 @@ TGtWebView >> evaluateNow: aJavaScript [
 	aPromise := (self evaluate: aJavaScript) await.
 	self enqueueTask: (BlPromiseTask new promise: aPromise).
 	^ aPromise
+]
+
+{ #category : #'api - webview' }
+TGtWebView >> headerAt: aHeaderName put: aHeaderValue [
+	self webView
+		headerAt: aHeaderName
+		put: aHeaderValue
 ]
 
 { #category : #'api - webview' }
