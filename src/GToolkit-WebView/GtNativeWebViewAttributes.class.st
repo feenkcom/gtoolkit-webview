@@ -22,6 +22,16 @@ GtNativeWebViewAttributes class >> primRelease: aHandle [
 ]
 
 { #category : #accessing }
+GtNativeWebViewAttributes >> addCustomProtocol: aProtocolName content: aProtocolContent [
+	self ffiLibrary
+		newString: aProtocolName
+		during: [ :aNameBox | 
+			self ffiLibrary
+				newString: aProtocolContent
+				during: [ :aValueBox | self primAddCustomProtocol: aNameBox content: aValueBox ] ]
+]
+
+{ #category : #accessing }
 GtNativeWebViewAttributes >> eventsHandle: aNativeWebViewEventHandle id: aWebViewId [
 	self primSetEventsHandle: aNativeWebViewEventHandle id: aWebViewId
 ]
@@ -29,6 +39,23 @@ GtNativeWebViewAttributes >> eventsHandle: aNativeWebViewEventHandle id: aWebVie
 { #category : #accessing }
 GtNativeWebViewAttributes >> extent: aPoint [
 	self primSetWidth: aPoint x height: aPoint y
+]
+
+{ #category : #accessing }
+GtNativeWebViewAttributes >> headerAt: aHeaderName put: aHeaderValue [
+	| success |
+	success := self ffiLibrary
+			newString: aHeaderName
+			during: [ :aNameBox | 
+				self ffiLibrary
+					newString: aHeaderValue
+					during: [ :aValueBox | self primSetHeaderName: aNameBox value: aValueBox ] ].
+
+	success
+		ifFalse: [ self
+				error: ('Invalid header name (`{1}`) or value (`{2}`)'
+						format: {aHeaderName.
+								aHeaderValue}) ]
 ]
 
 { #category : #accessing }
@@ -44,11 +71,27 @@ GtNativeWebViewAttributes >> position: aPoint [
 ]
 
 { #category : #'private - ffi' }
+GtNativeWebViewAttributes >> primAddCustomProtocol: aProtocolName content: aProtocolContent [
+	self ffiCall: #(void webview_attributes_add_custom_protocol(
+		self,
+		void* aProtocolName,
+		void* aProtocolContent))
+]
+
+{ #category : #'private - ffi' }
 GtNativeWebViewAttributes >> primSetEventsHandle: aNativeWebViewEventHandle id: aWebViewId [
 	self ffiCall: #(void webview_attributes_set_events_handler(
 		self,
 		void* aNativeWebViewEventHandle,
 		uint64 aWebViewId))
+]
+
+{ #category : #'private - ffi' }
+GtNativeWebViewAttributes >> primSetHeaderName: aHeaderName value: aHeaderValue [
+	self ffiCall: #(bool webview_attributes_add_header(
+		self,
+		void* aHeaderName,
+		void* aHeaderValue))
 ]
 
 { #category : #'private - ffi' }

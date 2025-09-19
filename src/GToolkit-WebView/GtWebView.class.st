@@ -11,7 +11,9 @@ Class {
 		'spaceId',
 		'id',
 		'announcer',
-		'currentUrl'
+		'currentUrl',
+		'headers',
+		'customProtocols'
 	],
 	#classVars : [
 		'UniqueIdGenerator'
@@ -22,6 +24,11 @@ Class {
 { #category : #'class initialization' }
 GtWebView class >> initialize [
 	UniqueIdGenerator := GtWebViewUniqueIdGenerator new
+]
+
+{ #category : #'as yet unclassified' }
+GtWebView >> addCustomProtocol: aProtocolName content: aContent [
+	customProtocols at: aProtocolName put: aContent
 ]
 
 { #category : #accessing }
@@ -59,6 +66,11 @@ GtWebView >> handleEvent: aWebViewEvent [
 	announcer announce: aWebViewEvent
 ]
 
+{ #category : #'as yet unclassified' }
+GtWebView >> headerAt: aHeaderName put: aHeaderValue [
+	headers at: aHeaderName put: aHeaderValue
+]
+
 { #category : #'host space - displaying' }
 GtWebView >> hide [
 	self isValid
@@ -84,6 +96,8 @@ GtWebView >> initialize [
 	html := nil.
 	position := 0@0.
 	extent := 600@400.
+	headers := OrderedDictionary new.
+	customProtocols := OrderedDictionary new.
 
 	announcer := Announcer new.
 	announcer when: GtWebViewNavigationEvent send: #onUrlChanged: to: self.
@@ -122,6 +136,16 @@ GtWebView >> privateEnsureCreateInSpace: aSpace [
 			position: position;
 			extent: extent;
 			eventsHandle: GtWebViewEventLoop eventsHandler id: self id.
+			
+		headers keysAndValuesDo: [ :headerName :headerValue |
+			theAttributes
+				headerAt: headerName
+				put: headerValue ].
+				
+		customProtocols keysAndValuesDo: [ :protocolName :protocolContent |
+			theAttributes
+				addCustomProtocol: protocolName
+				content: protocolContent ].
 			
 		aSpace hostSpaceDo: [ :aHostSpace |
 			| aWindowHandle |
