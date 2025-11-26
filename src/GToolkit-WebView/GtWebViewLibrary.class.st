@@ -59,6 +59,11 @@ GtWebViewLibrary class >> startUp: isANewSession [
 			self initGtk ]
 ]
 
+{ #category : #'accessing platform' }
+GtWebViewLibrary >> androidLibraryName [
+	^ 'libWebView.so'
+]
+
 { #category : #testing }
 GtWebViewLibrary >> hasModule [
 	"Return if there is a loadable and working Glutin library installed, false otherwise"
