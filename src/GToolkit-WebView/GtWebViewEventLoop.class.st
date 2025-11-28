@@ -47,7 +47,7 @@ GtWebViewEventLoop class >> shutDown: quitting [
 
 { #category : #accessing }
 GtWebViewEventLoop class >> start [
-	self uniqueInstance start
+	self uniqueInstance stop; start
 ]
 
 { #category : #'system startup' }
@@ -206,10 +206,15 @@ GtWebViewEventLoop >> start [
 { #category : #accessing }
 GtWebViewEventLoop >> stop [
 	processMutex critical: [
-		eventLoopProcess ifNotNil: [ :aProcess | aProcess terminate ].
-		eventLoopProcess := nil.
-		externalEventHandler ifNotNil: [ :anEventsHandler | anEventsHandler release ].
-		externalEventHandler := nil ]
+		externalEventHandler
+			ifNotNil: [ :anEventsHandler | anEventsHandler release ].
+		externalEventHandler := nil.
+		
+		eventLoopProcess ifNotNil: [ :aProcess |
+			eventLoopProcess := nil.
+			"terminate should be the last command"
+			aProcess terminate ]
+		].
 ]
 
 { #category : #accessing }
